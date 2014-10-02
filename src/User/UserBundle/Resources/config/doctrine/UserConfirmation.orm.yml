@@ -1,0 +1,18 @@
+User\UserBundle\Entity\UserConfirmation:
+    type: entity
+    table: user
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        userId:
+            type: integer
+        confirmed:
+            type: integer
+        dateSend: 
+            type:timestamp
+
+    lifecycleCallbacks: {  }

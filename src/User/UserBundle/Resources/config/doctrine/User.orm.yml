@@ -6,12 +6,11 @@ User\UserBundle\Entity\User:
             type: integer
             generator: { strategy: AUTO }
     fields:
-        userId:
-            type: integer
         username:
-            type: varchar
+            type: string
             scale: 10
         password:
-            type: varchar
+            type: string
             scale: 100
-        
+        stat:
+            type: integer
