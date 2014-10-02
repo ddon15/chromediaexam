@@ -1,0 +1,17 @@
+User\UserBundle\Entity\User:
+    type: entity
+    table: userstat
+    id:
+        id:
+            type: integer
+            generator: { strategy: AUTO }
+    fields:
+        userId:
+            type: integer
+        username:
+            type: varchar
+            scale: 10
+        password:
+            type: varchar
+            scale: 100
+        

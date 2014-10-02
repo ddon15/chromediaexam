@@ -1,0 +1,15 @@
+User\UserBundle\Entity\UserStatus:
+    type: entity
+    table: user
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        userId:
+            type: integer
+        stat:
+            type: integer
+    lifecycleCallbacks: {  }
