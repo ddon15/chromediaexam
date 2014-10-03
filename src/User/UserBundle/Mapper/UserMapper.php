@@ -22,7 +22,7 @@ class UserMapper{
 		
 		//Set user data
 		$user->setEmail($data['email']);
-		$user->setPassword($data['password']);
+		$user->setPassword(hash('sha256', $data['password']))	;
 		$user->setLastname($data['lastname']);
 		$user->setFirstname($data['firstname']);
 		$user->setStat($data['email']);
@@ -43,5 +43,24 @@ class UserMapper{
 	 * @param array of user info
 	 */
 
-	public 
+	public function updateUser($data) {
+
+	}
+
+	/**
+	 * Search user bu username and password for login functionalites from database
+	 * @param String Usernamen and Password
+	 */
+
+	public function searchUserBy($email, $password) {
+		 $user = $this->em
+        ->getRepository('UserUserBundle:User')
+        ->findOneBy(array(
+        	'email' => $email,
+        	'password' => $password
+        ));
+  
+		return $user;
+	}
+
 }

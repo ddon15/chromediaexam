@@ -10,3 +10,5 @@ security:
 
         default:
             anonymous: ~
+    encoders:
+         Symfony\Component\Security\Core\User\User: plaintext

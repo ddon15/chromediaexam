@@ -3,7 +3,6 @@
 namespace User\UserBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use User\UserBundle\Entity\User;
 use User\UserBundle\Form\SignUpUserForm;
 use User\UserBundle\Form\LoginForm;
 
@@ -15,6 +14,7 @@ class DefaultController extends Controller
     	$form = $this->createForm(new LoginForm());
         return $this->render('UserUserBundle:Default:index.html.twig',  array(
         	'form' => $form->createView(),
+        	'error' => '0'
         ));
     }
 
@@ -25,6 +25,7 @@ class DefaultController extends Controller
 
     	return $this->render('UserUserBundle:Default:signup.html.twig', array(
 			'form' => $form->createView(),
+			'error' => '3'
 		));
     }
 

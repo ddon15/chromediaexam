@@ -14,6 +14,6 @@ class LoginForm extends AbstractType
 	}
 
 	public function getName() { 
-        return 'username';
+        return 'login';
     }
 }

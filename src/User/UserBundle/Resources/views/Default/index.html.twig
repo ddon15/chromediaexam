@@ -3,7 +3,14 @@
 {% block title %}Login{% endblock %}
 {% block css %}<link href="{{ asset('css/user.css') }}" rel="stylesheet"> {% endblock %}
 
-{% block body %}<div class="alert alert-success">Hello. Click here to <a href="signup"> Sign up</a></div>{% endblock %}
+{% block body %}
+	{% if error == 0 %}
+		<div class="alert alert-success">Hello. Click here to <a href="signup"> Sign up</a> or <a href="forgotpw"> Forgot Password</a></div> 
+	{% else %}  
+		{% set error = 0 %} 
+		<div class="alert alert-danger">Invalid Email or Password</a></div> 
+	{% endif %}
+{% endblock %}
 
 {% block loginform %}
 	<form action="{{ path('checkuser') }}" class="navbar-form navbar-right" method="post" {{ form_enctype(form) }}>
