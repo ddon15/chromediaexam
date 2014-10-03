@@ -57,7 +57,7 @@ class UserMapper{
         ->getRepository('UserUserBundle:User')
         ->findOneBy(array(
         	'email' => $email,
-        	'password' => $password
+        	'password' => hash('sha256', $password)
         ));
   
 		return $user;
