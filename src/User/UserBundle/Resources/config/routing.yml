@@ -5,5 +5,15 @@ signup:
     path:     /signup
     defaults: { _controller: UserUserBundle:Default:signup}
 dashboard:
-    path:     /dashboard
+    path:    /dashboard
     defaults: { _controller: UserUserBundle:Default:dashboard}
+checkuser:
+    path:    /checkuser
+    defaults: { _controller: UserUserBundle:User:checkUser}
+    requirements:
+saveuser:
+    path:    /saveuser
+    defaults: { _controller: UserUserBundle:User:saveUser}
+    requirements:
+     
+

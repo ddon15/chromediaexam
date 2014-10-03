@@ -3,4 +3,30 @@
 {% block title %}Sign Up{% endblock %}
 {% block css %}<link href="{{ asset('css/user.css') }}" rel="stylesheet"> {% endblock %}
 
-{% block body %}<div class="alert alert-success">This is sign up page</div>{% endblock %}
+{% block body %}
+<div class="col-md-6">
+	<form action="{{ path('saveuser') }}" class="form" method="post" {{ form_enctype(form) }}>
+	<div class="form-group">
+        <label for="exampleInputEmail1">Email address</label>
+        {{ form_widget(form.email, { 'attr': {'class': 'form-control', 'placeholder': 'Enter your Email'} }) }}
+    </div>
+    <div class="form-group">
+        <label for="exampleInputEmail1">Firstname</label>
+        {{ form_widget(form.lastname, { 'attr': {'class': 'form-control', 'placeholder': 'Enter your Lastname'} }) }}
+    </div>
+    <div class="form-group">
+        <label for="exampleInputEmail1">Lastname</label>
+        {{ form_widget(form.firstname, { 'attr': {'class': 'form-control', 'placeholder': 'Enter your Firstname'} }) }}
+    </div>
+    <div class="form-group">
+        <label for="exampleInputEmail1">Password</label>
+        {{ form_widget(form.password, { 'attr': {'class': 'form-control', 'placeholder': 'Password'} }) }}
+    </div>
+    <div class="form-group">
+        <label for="exampleInputEmail1">Confirm</label>
+        {{ form_widget(form.conpassword, { 'attr': {'class': 'form-control', 'placeholder': 'Confirm your password'} }) }}
+    </div>
+	<input type="submit" class="btn btn-success"/>
+	</form>
+</div>
+{% endblock %}

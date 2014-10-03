@@ -3,4 +3,16 @@
 {% block title %}Login{% endblock %}
 {% block css %}<link href="{{ asset('css/user.css') }}" rel="stylesheet"> {% endblock %}
 
-{% block body %}<div class="alert alert-success">Hello World</div>{% endblock %}
+{% block body %}<div class="alert alert-success">Hello. Click here to <a href="signup"> Sign up</a></div>{% endblock %}
+
+{% block loginform %}
+	<form action="{{ path('checkuser') }}" class="navbar-form navbar-right" method="post" {{ form_enctype(form) }}>
+	<div class="form-group">
+        {{ form_widget(form.email, { 'attr': {'class': 'form-control', 'placeholder': 'Email'} }) }}
+    </div>
+    <div class="form-group">
+        {{ form_widget(form.password, { 'attr': {'class': 'form-control', 'placeholder': 'Password'} }) }}
+    </div>
+	<input type="submit" class="btn btn-success"/>
+</form>
+{% endblock %}

@@ -1,0 +1,9 @@
+User\UserBundle\Entity\User:
+properties:
+        username:
+                    - MaxLength: {limit:250, message: "Username must be less than 250 characters."}
+                    - NotBlank: {message: "Please enter a first name."}
+        password:
+                    - MaxLength: {limit:250, message: "Password must be less than 250 characters."}
+                    - NotBlank: {message: "Please enter a last name."}
+       

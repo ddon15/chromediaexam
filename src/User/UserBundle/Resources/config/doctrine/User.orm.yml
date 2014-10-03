@@ -1,15 +1,21 @@
 User\UserBundle\Entity\User:
     type: entity
-    table: userstat
+    table: users
     id:
         id:
             type: integer
             generator: { strategy: AUTO }
     fields:
-        username:
+        email:
             type: string
             scale: 10
         password:
+            type: string
+            scale: 100
+        lastname:
+            type: string
+            scale: 100
+        firstname:
             type: string
             scale: 100
         stat:

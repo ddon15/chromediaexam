@@ -1,6 +1,6 @@
 User\UserBundle\Entity\UserConfirmation:
     type: entity
-    table: user
+    table: userconfirmation
     id:
         id:
             type: integer
