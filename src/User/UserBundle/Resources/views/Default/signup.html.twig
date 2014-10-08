@@ -6,14 +6,10 @@
 {% block body %}
 <div class="col-md-6">
 	<form action="{{ path('saveuser') }}" class="form" method="post" {{ form_enctype(form) }}>
-       {% if error == 1 %}
-       <div class="alert alert-danger">
-       		Error in saving record
+       {% if app.session.flashbag.get('saveuser') %}
+       <div class="alert alert-success">
+       		User successfully save. You can <a href="login">Login</a> now
        </div>
-       {% elseif error == 0 %}
-         <div class="alert alert-success">
-       		User successfully save
-       	</div>
        	{% else %}
        	<div class="alert alert-info">
        		Enter your Details

@@ -10,5 +10,7 @@ security:
 
         default:
             anonymous: ~
+
     encoders:
-         Symfony\Component\Security\Core\User\User: plaintext
+         User\UserBundle\Entity\User:
+           id: pw_encoder

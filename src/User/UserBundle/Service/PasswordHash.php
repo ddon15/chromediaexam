@@ -6,9 +6,9 @@
  */
 namespace User\UserBundle\Service;
 
-use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
+// use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 
-class PasswordHash implements PasswordEncoderInterface
+class PasswordHash 
 {
 
     public function encodePassword($raw)
@@ -16,9 +16,9 @@ class PasswordHash implements PasswordEncoderInterface
         return hash('sha256', $raw); // Custom function for password encrypt
     }
 
-    public function isPasswordValid($encoded, $raw)
+    public function isPasswordValid($encoded)
     {
-        return $encoded === $this->encodePassword($raw);
+        return $this->encodePassword($raw);
     }
 
 }

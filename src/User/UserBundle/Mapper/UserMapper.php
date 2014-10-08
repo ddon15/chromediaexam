@@ -3,14 +3,16 @@ namespace User\UserBundle\Mapper;
 
 use User\UserBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
-
+use User\UserBundle\Services\PasswordHash;
 
 class UserMapper{
 
 	protected $em;
+	protected $pwHash;
 
 	public function __construct(EntityManager $em) {
 		$this->em = $em;
+		//$this->pwHash = $pwHash;
 	}
 	/**
 	 * Save User to database
@@ -19,13 +21,16 @@ class UserMapper{
 	
 	public function saveUser($data) {
 		$user = new User();
-		
+		//$encoder = $this->get('pw_encoder')
+  		// ->getEncoder($user);
+  		//$password = $encoder->encodePassword($data['password']);
 		//Set user data
 		$user->setEmail($data['email']);
-		$user->setPassword(hash('sha256', $data['password']))	;
+		$user->setPassword($data['password']);
 		$user->setLastname($data['lastname']);
 		$user->setFirstname($data['firstname']);
 		$user->setStat($data['email']);
+		// $user->setSalt($data['salt']);
 		$this->em->persist($user);
 		$this->em->flush();
 
@@ -57,8 +62,7 @@ class UserMapper{
         ->getRepository('UserUserBundle:User')
         ->findOneBy(array(
         	'email' => $email,
-        	'password' => hash('sha256', $password)
-        ));
+        	'password' => $password));
   
 		return $user;
 	}

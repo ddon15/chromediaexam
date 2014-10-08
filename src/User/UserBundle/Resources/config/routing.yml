@@ -15,5 +15,9 @@ saveuser:
     path:    /saveuser
     defaults: { _controller: UserUserBundle:User:saveUser}
     requirements:
+logout:
+    path:    /logout
+    defaults: { _controller: UserUserBundle:User:logoutUser}
+    requirements:
      
 
