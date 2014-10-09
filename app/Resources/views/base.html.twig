@@ -17,11 +17,11 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="#">Exam 1</a>
+              <a class="navbar-brand" href="login">Home</a>
             </div>
             <div class="navbar-collapse collapse">
               {% block loginform%}
-
+              
               {% endblock %}
             </div><!--/.navbar-collapse -->
           </div>
@@ -35,6 +35,13 @@
             <p>© Company 2014</p>
         </footer>
         </div>
-       
+         {% block javascripts %} 
+            {% javascripts 
+                '@UserUserBundle/Resources/public/js/jquery.js' 
+                '@UserUserBundle/Resources/public/js/main.js' 
+            %}
+                 <script type="text/javascript" src="{{ asset_url }}"></script>
+            {% endjavascripts %}    
+        {% endblock %}
     </body>
 </html>

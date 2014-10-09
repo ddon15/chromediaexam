@@ -19,5 +19,17 @@ logout:
     path:    /logout
     defaults: { _controller: UserUserBundle:User:logoutUser}
     requirements:
-     
-
+updateuser:
+    path:    /updateuser
+    defaults: { _controller: UserUserBundle:User:updateUser}
+    requirements:
+changepass:
+    path:    /changepass
+    defaults: { _controller: UserUserBundle:Default:changePass}
+    requirements:
+updatepass:
+    path:    /updatepass
+    defaults: {_controller: UserUserBundle:User:updatePass}
+activate:
+    path:    /activate
+    defaults: {_controller: UserUserBundle:User:activateAccount}

@@ -10,6 +10,7 @@ use User\UserBundle\Mapper\UserMapper;
 use User\UserBundle\Form\SignUpUserForm;
 use User\UserBundle\Form\LoginForm;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle;
 
 
 class UserController extends Controller {
@@ -27,10 +28,22 @@ class UserController extends Controller {
  																	->encodePassword($logForm['password']));
 
  		if(count($check) > 0) {
- 			$session = new Session();
-			//$session->start();
-			$session->set('user', '1');
- 			return $this->redirect($this->generateUrl('dashboard'));
+ 			
+ 			$stat = $check->getStat();
+ 			if($stat == 1) {
+	 			$session = new Session();
+				//$session->start();
+				$session->set('user', '1');
+				$session->set('userid', $check->getId());
+				//print_r(expression)
+	 			return $this->redirect($this->generateUrl('dashboard'));
+	 		} else {
+	 			$form = $this->createForm(new LoginForm());
+	 			return $this->render('UserUserBundle:Default:index.html.twig',  array(
+			        	'error' => '5',
+			        	'form' => $form->createView()
+			        ));
+	 		}
  		} else {
  			$form = $this->createForm(new LoginForm());
  			return $this->render('UserUserBundle:Default:index.html.twig',  array(
@@ -52,13 +65,21 @@ class UserController extends Controller {
  		//Hash password
  		$rForm['password'] = $this->get('pw_encoder')->encodePassword($password);
  		try {
- 			$form = $this->createForm(new SignUpUserForm());
- 			$save = $this->get('user.userbundle.mapper')->saveUser($rForm);
+ 			//Save user information
+			$form = $this->createForm(new SignUpUserForm());
+			$save = $this->get('user.userbundle.mapper')->saveUser($rForm);
  			if($save) {
  				$session = new Session();
-				//$session->start();
+				
 				$session->getFlashBag()->add('saveuser', 1);
+
+				//Send an email
+				$rForm['id'] = $save;
+		
+				$this->sendEmail($rForm);
+
  				return $this->redirect($this->generateUrl('signup'));
+
  			} else {
  				return $this->render('UserUserBundle:Default:signup.html.twig',  array(
 		        	'error' => '1',
@@ -82,4 +103,105 @@ class UserController extends Controller {
  		return $this->redirect($this->generateUrl('login'));
  	}
 
+ 	/**
+ 	 * Update user
+ 	 */
+
+ 	public function updateUserAction() 
+ 	{
+ 		
+ 		$request = Request::createFromGlobals();
+ 		$rForm = $request->request->get('editaccount');
+ 		
+ 		try {
+ 			$session = new Session();
+ 			$rForm['id'] = $session->get('userid');
+ 			$update = $this->get('user.userbundle.mapper')->updateUser($rForm);
+ 			if($update) {
+ 				$session->getFlashBag()->add('updateuser', 0);
+ 			} else {
+ 				$session->getFlashBag()->add('updateuser', 1);
+ 			}
+
+ 			return $this->redirect($this->generateUrl('dashboard'));
+
+ 		} catch(Exception $e) {
+
+ 			echo $e->getMessage();
+ 		}
+ 	}
+
+ 	/**
+ 	 * Update User password
+ 	 */
+ 	public function updatePassAction()
+ 	{
+ 		$request 	= Request::createFromGlobals();
+ 		$rForm 		= $request->request->get('updatePassForm');
+ 		$session = new Session();
+
+ 		//Get current password of user
+ 		$searchUserCurrentPass = $this->get('user.userbundle.mapper')->searchUserById($session->get('userid')); 
+ 		if($searchUserCurrentPass) {
+ 			$currentPass = $searchUserCurrentPass->getPassword();
+ 		}
+
+ 		//Compare Current password to Current password inputted by user
+
+ 		if($currentPass != $rForm['curpassword']) {
+ 			$session->getFlashbag()->add('changepassword', 3);
+ 		} elseif($rForm['newpassword'] != $rForm['conpassword']) {
+ 			$session->getFlashbag()->add('changepassword', 2);
+ 		} else {
+ 			$rForm['id'] = $session->get('userid');
+ 			$savePass = $this->get('user.userbundle.mapper')->updatePass($rForm);
+ 			$session->getFlashbag()->add('changepassword', 0);
+ 		}
+
+ 		return $this->redirect($this->generateUrl('changepass'));
+
+ 	}
+
+ 		/**
+	 * Send an verification email
+	 */
+	public function sendEmail($data) {
+		$message = \Swift_Message::newInstance()
+	        ->setSubject('Verfication Email')
+	        ->setFrom('diovannie.donayre@chromedia.com')
+	        ->setTo($data['email'])
+	        ->setBody($this->renderView('UserUserBundle:Default:email.html.twig', array(
+																						'name' => $data['lastname'], 
+																						'id'   => $data['id'],
+																						'email' => $data['email']
+																						)
+				));
+
+	    try{
+	    	$this->get('mailer')->send($message);
+	  	} catch (Exception $e) {
+	  		echo $e->getMessage();
+	  	}
+	    //return $this->render(...);
+	}
+
+	/**
+	 * Activate usre account
+	 */
+
+	public function activateAccountAction() {
+		$request 	= Request::createFromGlobals();
+		$form = $this->createForm(new LoginForm());
+		$id = $request->query->get('id');
+		$activate = $this->get('user.userbundle.mapper')->activateAccount($id);
+
+		if($activate) {
+				return $this->render('UserUserBundle:Default:index.html.twig',  array(
+		        	'error' => '4',
+		        	'form' => $form->createView()
+		        ));
+		} else {
+			return false;
+		}
+	}
  }

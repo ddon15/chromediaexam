@@ -5,7 +5,9 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>{% block title %}Test Application{% endblock %}</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
         {% block css %} {% endblock %}
+       
     </head>
     <body>
         <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -18,11 +20,11 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="#">User Dashboard</a>
+              <a class="navbar-brand" href="dashboard">User Dashboard</a>
             </div>
                <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Edit Account</a></li>
-                <li><a href="#about">Change Password</a></li>
+                <li id="menu1" class="active"><a href="dashboard">Edit Account</a></li>
+                <li id="menu2"><a href="changepass">Change Password</a></li>
               </ul>
             <div class="navbar-collapse collapse">
             <div class="navbar-form navbar-right">
@@ -40,6 +42,13 @@
             <p>© Company 2014</p>
         </footer>
         </div>
-       
+        {% block javascripts %} 
+            {% javascripts 
+                '@UserUserBundle/Resources/public/js/jquery.js' 
+                '@UserUserBundle/Resources/public/js/main.js' 
+            %}
+                 <script type="text/javascript" src="{{ asset_url }}"></script>
+            {% endjavascripts %}    
+        {% endblock %}
     </body>
 </html>

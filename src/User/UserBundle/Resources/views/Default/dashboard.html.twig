@@ -2,41 +2,31 @@
 
 {% block title %}Dashboard{% endblock %}
 {% block css %}<link href="{{ asset('css/user.css') }}" rel="stylesheet">{% endblock %}
-
-{% block body %}<div class="alert alert-success">Welcome User to Dashboard</div>
-	<div class="col-md-6">
-	<form action="{{ path('saveuser') }}" class="form" method="post" {{ form_enctype(form) }}>
+{% block body %}<div class="alert alert-success">Welcome <strong>{{lname}}</strong> to Dashboard</div>
+	<div class="col-md-6 pull-right">
+	<form action="{{ path('updateuser') }}" class="form" id="frmEditUser" method="post" {{ form_enctype(form) }}>
        {% if app.session.flashbag.get('updateuser') %}
-       <div class="alert alert-success">
-       		User successfully Updated
+       <div class="alert alert-info">
+       		User Information successfully Updated
        </div>
        	{% else %}
-       	<div class="alert alert-info">
-       		Enter your Details
+       	<div class="alert alert-danger">
+       		<strong> Edit your Account </strong>
        	</div>
        	{% endif %}
-    
 	<div class="form-group">
         <label for="exampleInputEmail1">Email address</label>
-        {{ form_widget(form.email, { 'attr': {'class': 'form-control', 'placeholder': 'Enter your Email'} }) }}
+        {{ form_widget(form.email, { 'attr': {'class': 'form-control', 'placeholder': 'Enter your Email', 'value' : email, 'disabled' : 'disabled'} }) }}
     </div>
     <div class="form-group">
         <label for="exampleInputEmail1">Firstname</label>
-        {{ form_widget(form.lastname, { 'attr': {'class': 'form-control', 'placeholder': 'Enter your Lastname'} }) }}
+        {{ form_widget(form.lastname, { 'attr': {'class': 'form-control', 'placeholder': 'Enter your Lastname', 'value' : lname} }) }}
     </div>
     <div class="form-group">
         <label for="exampleInputEmail1">Lastname</label>
-        {{ form_widget(form.firstname, { 'attr': {'class': 'form-control', 'placeholder': 'Enter your Firstname'} }) }}
+        {{ form_widget(form.firstname, { 'attr': {'class': 'form-control', 'placeholder': 'Enter your Firstname', 'value' : fname} }) }}
     </div>
-    <div class="form-group">
-        <label for="exampleInputEmail1">Password</label>
-        {{ form_widget(form.password, { 'attr': {'class': 'form-control', 'placeholder': 'Password'} }) }}
-    </div>
-    <div class="form-group">
-        <label for="exampleInputEmail1">Confirm</label>
-        {{ form_widget(form.conpassword, { 'attr': {'class': 'form-control', 'placeholder': 'Confirm your password'} }) }}
-    </div>
-	<input type="submit" class="btn btn-success"/>
+	<input type="submit" class="btn btn-success pull-right" value="Update"/>
 	</form>
 </div>
 {% endblock %}

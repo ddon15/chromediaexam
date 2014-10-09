@@ -5,6 +5,7 @@ use User\UserBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
 use User\UserBundle\Services\PasswordHash;
 
+
 class UserMapper{
 
 	protected $em;
@@ -29,7 +30,7 @@ class UserMapper{
 		$user->setPassword($data['password']);
 		$user->setLastname($data['lastname']);
 		$user->setFirstname($data['firstname']);
-		$user->setStat($data['email']);
+		$user->setStat(0);
 		// $user->setSalt($data['salt']);
 		$this->em->persist($user);
 		$this->em->flush();
@@ -50,6 +51,20 @@ class UserMapper{
 
 	public function updateUser($data) {
 
+		$user = $this->em->getRepository('UserUserBundle:User')->find($data['id']);
+
+		if(!$user) {
+			throw $this->createNotFoundException(
+            	'No user found for id '.$data['id']
+        	);
+		}
+		//$user->setPassword($data['password']);
+		$user->setLastname($data['lastname']);
+		$user->setFirstname($data['firstname']);
+		$user->setStat(0);
+		$this->em->flush();
+
+		return true;
 	}
 
 	/**
@@ -65,6 +80,66 @@ class UserMapper{
         	'password' => $password));
   
 		return $user;
+	}
+
+	/**
+	 * Search user by id
+	 * @param Int id
+	 */
+
+	public function searchUserById($id) {
+
+		$ufind = $this->em->getRepository('UserUserBundle:User')->find($id);
+		if($ufind) {
+			return $ufind;
+		} else {
+			return false;
+		}
+	} 
+
+	/**
+	 * Update User Password
+	 * @param Array of data user info
+	 */
+
+	public function updateUserPass($data) {
+
+		$user = $this->em->getRepository('UserUserBundle:User')->find($data['id']);
+
+		if(!$user) {
+			throw $this->createNotFoundException(
+            	'No user found for id '.$data['id']
+        	);
+		}
+		$user->setPassword($data['password']);
+		
+		$this->em->flush();
+
+		return true;
+	}
+
+	/**
+	 * Activate account
+	 * @param Int id
+	 */
+	public function activateAccount($id) {
+		$user = $this->em->getRepository('UserUserBundle:User')->find($id);
+
+		if(!$user) {
+			throw $this->createNotFoundException(
+            	'No user found for id '.$data['id']
+        	);
+		} else {
+			if($user->getStat() == 1) {
+				throw $this->createNotFoundException(
+            	'User is already activated'
+        		);
+		   }
+		}
+		$user->setStat(1);
+		$this->em->flush();
+
+		return true;
 	}
 
 }

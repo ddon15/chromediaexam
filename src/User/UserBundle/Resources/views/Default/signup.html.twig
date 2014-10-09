@@ -5,10 +5,10 @@
 
 {% block body %}
 <div class="col-md-6">
-	<form action="{{ path('saveuser') }}" class="form" method="post" {{ form_enctype(form) }}>
+	<form action="{{ path('saveuser') }}" class="form" id="frmSignup" method="post" {{ form_enctype(form) }}>
        {% if app.session.flashbag.get('saveuser') %}
        <div class="alert alert-success">
-       		User successfully save. You can <a href="login">Login</a> now
+       		User successfully save. Please activate your account that we send to your email
        </div>
        	{% else %}
        	<div class="alert alert-info">
@@ -36,7 +36,7 @@
         <label for="exampleInputEmail1">Confirm</label>
         {{ form_widget(form.conpassword, { 'attr': {'class': 'form-control', 'placeholder': 'Confirm your password'} }) }}
     </div>
-	<input type="submit" class="btn btn-success"/>
+	<input type="submit" class="btn btn-success" id="btnsaveuser" data-loading-text="Please wait"/>
 	</form>
 </div>
 {% endblock %}

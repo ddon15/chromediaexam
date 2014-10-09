@@ -32,5 +32,9 @@ monolog:
 assetic:
     use_controller: "%use_assetic_controller%"
 
+swiftmailer:
+    transport: gmail
+    username:  diovannie.donayre@chromedia.com
+    password:  d10v@nnie
 #swiftmailer:
 #    delivery_address: me@example.com

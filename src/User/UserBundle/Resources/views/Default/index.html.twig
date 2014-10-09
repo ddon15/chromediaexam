@@ -6,7 +6,11 @@
 {% block body %}
 	{% if error == 0 %}
 		<div class="alert alert-success">Hello. Click here to <a href="signup"> Sign up</a> or <a href="forgotpw"> Forgot Password</a></div> 
-	{% else %}  
+	{% elseif error == 4 %}  
+		<div class="alert alert-success">You have successfully activated your account. Login now!</div> 
+	{% elseif error == 5 %}  
+		<div class="alert alert-danger">Your account is not yet activated. Please check your email.</div> 
+	{% else %}
 		{% set error = 0 %} 
 		<div class="alert alert-danger">Invalid Email or Password</a></div> 
 	{% endif %}
