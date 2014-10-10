@@ -28,7 +28,7 @@ class UserController extends Controller {
  																	->encodePassword($logForm['password']));
 
  		if(count($check) > 0) {
- 			
+
  			$stat = $check->getStat();
  			if($stat == 1) {
 	 			$session = new Session();
@@ -75,7 +75,6 @@ class UserController extends Controller {
 
 				//Send an email
 				$rForm['id'] = $save;
-		
 				$this->sendEmail($rForm);
 
  				return $this->redirect($this->generateUrl('signup'));
@@ -162,7 +161,7 @@ class UserController extends Controller {
 
  	}
 
- 		/**
+ 	/**
 	 * Send an verification email
 	 */
 	public function sendEmail($data) {
@@ -171,7 +170,7 @@ class UserController extends Controller {
 	        ->setFrom('diovannie.donayre@chromedia.com')
 	        ->setTo($data['email'])
 	        ->setBody($this->renderView('UserUserBundle:Default:email.html.twig', array(
-																						'name' => $data['lastname'], 
+																						'name' => $data['firstname'], 
 																						'id'   => $data['id'],
 																						'email' => $data['email']
 																						)
@@ -186,6 +185,49 @@ class UserController extends Controller {
 	}
 
 	/**
+	 * Send an Reset password link
+	 */
+	public function sendEmailToResetPassword($data) {
+		$uid = urlencode($data['uid']);
+		$id = urlencode($data['id']);
+		$authcode = urlencode($data['authcode']);
+		$dataUrl = array(
+			  'id'=>$id,
+              'authcode'=>$authcode
+              );
+
+ 		$urlGet =  http_build_query($dataUrl);
+
+		$request = Request::createFromGlobals();
+		$host = $request->server->get('HTTP_HOST');
+		$url = html_entity_decode("http://".$host."/app_dev.php/resetpassword?".$urlGet);
+		
+
+		$message = \Swift_Message::newInstance()
+	        ->setSubject('Reset Password')
+	        ->setFrom('diovannie.donayre@chromedia.com')
+	        ->setTo($data['email'])
+	        ->setBody($this->renderView('UserUserBundle:Default:resetemail.html.twig', array(
+																						'name' => $data['firstname'], 
+																						'email' => $data['email'],
+																						'url' => $url
+																						)
+				));
+
+	    try{
+	    	$send = $this->get('mailer')->send($message);
+	    	if($send) {
+	    		return true;
+	    	} else {
+	    		return false;
+	    	}
+	  	} catch (Exception $e) {
+	  		echo $e->getMessage();
+	  	}
+	    //return $this->render(...);
+	}
+
+	/**
 	 * Activate usre account
 	 */
 
@@ -193,6 +235,7 @@ class UserController extends Controller {
 		$request 	= Request::createFromGlobals();
 		$form = $this->createForm(new LoginForm());
 		$id = $request->query->get('id');
+		
 		$activate = $this->get('user.userbundle.mapper')->activateAccount($id);
 
 		if($activate) {
@@ -203,5 +246,37 @@ class UserController extends Controller {
 		} else {
 			return false;
 		}
+	}
+
+	public function saveUserConfirmationAction() {
+		$request 	= Request::createFromGlobals();
+		$rForm		= $request->request->get('forgotPassForm');
+		
+		$id 		= $this->get('user.userbundle.mapper')->searchUserByEmail($rForm['email']);
+		$rForm['uid'] = $id->getId();
+		
+		if($id) {
+			$save = $this->get('user.userbundle.mapper')->saveUserConfirmation($id->getId());
+			//print_r($save); exit;
+			if($save) {
+				$rForm['id'] = $save->getId();
+				$rForm['uid'] = $id->getId();
+				$rForm['authcode'] = $save->getAuthCode();
+				$rForm['firstname'] = $id->getFirstname();
+
+				//Send Reset Email
+				$sendEmail = $this->sendEmailToResetPassword($rForm);
+				if($sendEmail) {
+					return new JsonResponse(array('error' => 0, 'msg' => 'Successfully save. Please check your email'));
+				} else {
+					return new JsonResponse(array('error' => 1, 'msg' => 'Errror sending email'));
+				}
+			} else {
+				return new JsonResponse(array('error' => 1, 'msg' => 'Errror savaing User confimration info'));
+			}
+		} else {
+			return new JsonResponse(array('error' => 1, 'msg' => 'Email was not found.'));
+		}
+	
 	}
  }

@@ -19,4 +19,4 @@ User\UserBundle\Entity\User:
             type: string
             scale: 100
         stat:
-            type: integer
+            type: integer   

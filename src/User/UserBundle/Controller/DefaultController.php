@@ -6,7 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use User\UserBundle\Form\SignUpUserForm;
 use User\UserBundle\Form\LoginForm;
 use User\UserBundle\Form\EditAccountForm;
-use User\UserBundle\Form\ChangePassForm;
+use User\UserBundle\Form\ForgotPassForm;
+use User\UserBundle\Form\ResetPassForm;
 use User\UserBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,7 +43,6 @@ class DefaultController extends Controller
 
     public function dashboardAction()
     {
-       
         $session = new Session();
         $user = $session->get('user');
         $id = $session->get('userid');
@@ -111,5 +111,76 @@ class DefaultController extends Controller
             return $this->render('UserUserBundle:Default:changepass.html.twig', $data);
 
         }
+    }
+
+    public function forgotPassAction()
+    {
+        $form = $this->createForm(new ForgotPassForm());
+        $data['form'] = $form->createView();
+        $data['error'] = 4;
+        return $this->render('UserUserBundle:Default:forgotpass.html.twig', $data);
+    }
+
+    public function testAction() 
+    {
+        $request    = Request::createFromGlobals();
+        echo $request->server->get('HTTP_HOST');
+        die(' This is testing page');
+
+    }
+
+    public function resetPassAction() 
+    {
+        $form = $this->createForm(new ResetPassForm());
+        $request    = Request::createFromGlobals();
+        $em = $this->getDoctrine()->getManager();
+        $method = $request->getMethod();
+        $data = [];
+        $data['form'] = $form->createView();
+        $id= $request->query->get('id');
+        $authcode= $request->query->get('authcode');
+
+        if($method == 'POST') {
+            $rForm = $request->request->get('resetPassForm');
+        
+            $pw =  $rForm['newpassword'];
+            $conpw = $rForm['conpassword'];
+            $searchConUser= $this->get('user.userbundle.mapper')->searchConUser($id, $authcode); 
+ 
+            if($searchConUser) {
+                //Update confirmation
+                $searchConUser->setConfirmed(1);
+                $update = $em->flush();
+                //Update password
+                if($pw != $conpw) {
+                    $data['error'] = 2;
+                    return $this->render('UserUserBundle:Default:resetpass.html.twig', $data);
+                }
+                $dataPass['id']         = $searchConUser->getUserId();
+                $dataPass['password']   = $this->get('pw_encoder')->encodePassword($pw);
+
+                $updatePassword= $this->get('user.userbundle.mapper')->updateUserPass($dataPass); 
+                if($updatePassword) {
+                    $data['error'] = 0;
+                } else  {
+                    $data['error'] = 3;
+                }
+                 
+                return $this->render('UserUserBundle:Default:resetpass.html.twig', $data);
+                
+            } else {
+
+                $data['error'] = 1;
+                return $this->render('UserUserBundle:Default:resetpass.html.twig', $data);
+            }
+
+        } else {
+          
+            $data['error'] = 4;
+            $data['id'] = $id;
+            $data['authcode'] = $authcode;
+            return $this->render('UserUserBundle:Default:resetpass.html.twig', $data);
+        }
+       
     }
 }

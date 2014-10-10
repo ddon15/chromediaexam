@@ -2,6 +2,7 @@
 namespace User\UserBundle\Mapper;
 
 use User\UserBundle\Entity\User;
+use User\UserBundle\Entity\UserConfirmation;
 use Doctrine\ORM\EntityManager;
 use User\UserBundle\Services\PasswordHash;
 
@@ -83,6 +84,21 @@ class UserMapper{
 	}
 
 	/**
+	 * Search user bu username and password for login functionalites from database
+	 * @param String Usernamen and Password
+	 */
+
+	public function searchUserByEmail($email) {
+
+		 $user = $this->em
+        ->getRepository('UserUserBundle:User')
+        ->findOneBy(array(
+        	'email' => $email));
+  
+		return $user;
+	}
+
+	/**
 	 * Search user by id
 	 * @param Int id
 	 */
@@ -142,4 +158,50 @@ class UserMapper{
 		return true;
 	}
 
+	/**
+	 * Save user Forgot password detail
+	 * @param Int id
+	 */
+	public function saveUserConfirmation($id) {
+		$userCon = new UserConfirmation();
+		$userCon->setUserId($id);
+		$userCon->setConfirmed(0);
+		$userCon->setDateSend(date('Y-m-d H:i:s'));
+		$userCon->setAuthCode(uniqid());
+		$this->em->persist($userCon);
+		$this->em->flush();
+
+		$save = $userCon;
+		if(!$save) {
+			throw new exception('Unable to create new user confirmation detail');
+		} else {
+			return $save;
+		}
+	}
+
+	public function searchConUser($id, $authcode) {
+		 $userCon = $this->em
+        ->getRepository('UserUserBundle:UserConfirmation')
+        ->findOneBy(array(
+        	'id' => $id,
+        	'authCode' => $authcode));
+  
+		return $userCon;
+	}
+
+	public function updateUserCon($id) {
+
+		$user = $this->em->getRepository('UserUserBundle:User')->find($id);
+
+		if(!$user) {
+			throw $this->createNotFoundException(
+            	'No user found for id '.$data['id']
+        	);
+		}
+		$user->setConfirmed(1);
+		
+		$this->em->flush();
+
+		return true;
+	}
 }

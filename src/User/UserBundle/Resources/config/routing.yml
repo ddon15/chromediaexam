@@ -33,3 +33,15 @@ updatepass:
 activate:
     path:    /activate
     defaults: {_controller: UserUserBundle:User:activateAccount}
+forgotpass:
+    path:    /forgotpass
+    defaults: {_controller: UserUserBundle:Default:forgotPass}
+saveforgotpass:
+    path:    /saveforgotpass
+    defaults: {_controller: UserUserBundle:User:saveUserConfirmation}
+test:
+    path:    /test
+    defaults: {_controller: UserUserBundle:Default:test}
+resetpassword:
+    path:    /resetpassword
+    defaults: {_controller: UserUserBundle:Default:resetPass}

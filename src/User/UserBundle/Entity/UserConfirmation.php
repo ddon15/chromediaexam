@@ -26,6 +26,8 @@ class UserConfirmation
     
     private $dateSend;
 
+    private $authCode;
+
 
     /**
      * Get id
@@ -58,29 +60,6 @@ class UserConfirmation
     public function getUserId()
     {
         return $this->userId;
-    }
-
-    /**
-     * Set stat
-     *
-     * @param integer $stat
-     * @return UserStatus
-     */
-    public function setStat($stat)
-    {
-        $this->stat = $stat;
-
-        return $this;
-    }
-
-    /**
-     * Get stat
-     *
-     * @return integer 
-     */
-    public function getStat()
-    {
-        return $this->stat;
     }
 
     /**
@@ -127,5 +106,28 @@ class UserConfirmation
     public function getDateSend()
     {
         return $this->dateSend;
+    }
+
+    /**
+     * Set authCode
+     *
+     * @param string $authCode
+     * @return UserConfirmation
+     */
+    public function setAuthCode($authCode)
+    {
+        $this->authCode = $authCode;
+
+        return $this;
+    }
+
+    /**
+     * Get authCode
+     *
+     * @return string 
+     */
+    public function getAuthCode()
+    {
+        return $this->authCode;
     }
 }

@@ -12,6 +12,9 @@ User\UserBundle\Entity\UserConfirmation:
             type: integer
         confirmed:
             type: integer
+        authCode:
+            type: string
+            scale: 100
         dateSend: 
             type:timestamp
 

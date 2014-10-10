@@ -39,4 +39,28 @@ $(document).ready(function(){
 		$('#btnsaveuser').attr('disabled', 'disabled').val('Please wait...');
 	});
 
+	$('#frmForgotPass').on('submit', function(e){
+		e.preventDefault();
+
+		var data = $(this).serialize();
+		$.ajax({
+			url		:'saveforgotpass',
+			type 	:'post',
+			cache 	: false,
+			data 	: data,
+			dataType: 'json',
+			beforeSend: function() {$('#forgotPassForm_submitemail').html('<span class="fa fa-spin fa-spinner"></span>').attr('disabled', 'disabled')},
+			success: function(data) {
+				console.log(data);
+				if(data.error == 0) {
+					$('div#error').addClass('alert alert-success').html('Reset password link successfully send to your email');
+					$('#forgotPassForm_submitemail').html('Send me and Email').removeAttr('disabled');
+					$('#forgotPassForm_email').val('');
+				} else {
+					$('div#error').addClass('alert alert-success').html(data.msg);
+				}
+			}
+		});
+	})
+
 });
