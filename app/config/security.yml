@@ -1,16 +1,26 @@
 security:
     providers:
-        in_memory:
-            memory: ~
-
+        chain_provider:
+            chain:
+               providers: [user_db]
+        user_db:
+            entity: { class: User\UserBundle\Entity\User, property: email }
     firewalls:
-        dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
-            security: false
-
-        default:
+        login_firewall:
+            pattern:   ^/login$
             anonymous: ~
-
+        secured_area:
+            pattern:    ^/
+            form_login: ~
     encoders:
-         User\UserBundle\Entity\User:
-           id: pw_encoder
+        User\UserBundle\Entity\User:
+            id: sha256salted_encoder
+    access_control:
+       # - { path: /login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+       # - { path: /signup, roles: IS_AUTHENTICATED_ANONYMOUSLY}
+       # - { path: /.*, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+       - { path: /signup, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+       - { path: /login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+
+
+     

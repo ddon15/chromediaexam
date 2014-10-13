@@ -1,13 +1,12 @@
 <?php 
 namespace User\UserBundle\Mapper;
 
-use User\UserBundle\Entity\User;
-use User\UserBundle\Entity\UserConfirmation;
+use User\UserBundle\Entity\UserCofirmation;
 use Doctrine\ORM\EntityManager;
 use User\UserBundle\Services\PasswordHash;
 
 
-class UserMapper{
+class UserConfirmationMapper{
 
 	protected $em;
 	protected $pwHash;
@@ -21,16 +20,15 @@ class UserMapper{
 	 * @param array of user info
 	 */
 	
-	public function saveUser($user) {
-		//var_dump($user); exit();
-		$user->setStat(0);
-		$user->setRoles('user');
+	public function saveUser($id) {
+		$user = new UserConfirmation();
+		$user->setUserId($id);
 		$this->em->persist($user);
 		$this->em->flush();
 
 		$save = $user->getId();
 		if(!$save) {
-			throw new exception('Unable to create new user');
+			throw new exception('Unable to create new user confirmation');
 		} else {
 			return $save;
 		}
@@ -54,7 +52,6 @@ class UserMapper{
 		//$user->setPassword($data['password']);
 		$user->setLastname($data['lastname']);
 		$user->setFirstname($data['firstname']);
-	
 		$user->setStat(0);
 		$this->em->flush();
 
@@ -66,25 +63,9 @@ class UserMapper{
 	 * @param String Usernamen and Password
 	 */
 
-	public function searchUserBy($email, $password) {
+	public function searchUserBy($email) {
 		 $user = $this->em
-        ->getRepository('UserUserBundle:User')
-        ->findOneBy(array(
-        	'email' => $email,
-        	'password' => $password));
-  
-		return $user;
-	}
-
-	/**
-	 * Search user bu username and password for login functionalites from database
-	 * @param String Usernamen and Password
-	 */
-
-	public function searchUserByEmail($email) {
-
-		 $user = $this->em
-        ->getRepository('UserUserBundle:User')
+        ->getRepository('UserUserBundle:UserConfirmation')
         ->findOneBy(array(
         	'email' => $email));
   
@@ -135,65 +116,20 @@ class UserMapper{
 		$user = $this->em->getRepository('UserUserBundle:User')->find($id);
 
 		if(!$user) {
-			return false;
-		} 
-		//current stat
-		$stat = $user->getStat();
-		//echo $stat; exit();
-		if($stat == 1) {
-			return false;
+			throw $this->createNotFoundException(
+            	'No user found for id '.$data['id']
+        	);
+		} else {
+			if($user->getStat() == 1) {
+				throw $this->createNotFoundException(
+            	'User is already activated'
+        		);
+		   }
 		}
-		//Save stat
 		$user->setStat(1);
 		$this->em->flush();
 
 		return true;
 	}
 
-	/**
-	 * Save user Forgot password detail
-	 * @param Int id
-	 */
-	public function saveUserConfirmation($id) {
-		$userCon = new UserConfirmation();
-		$userCon->setUserId($id);
-		$userCon->setConfirmed(0);
-		$userCon->setDateSend(date('Y-m-d H:i:s'));
-		$userCon->setAuthCode(uniqid());
-		$this->em->persist($userCon);
-		$this->em->flush();
-
-		$save = $userCon;
-		if(!$save) {
-			throw new exception('Unable to create new user confirmation detail');
-		} else {
-			return $save;
-		}
-	}
-
-	public function searchConUser($id, $authcode) {
-		 $userCon = $this->em
-        ->getRepository('UserUserBundle:UserConfirmation')
-        ->findOneBy(array(
-        	'id' => $id,
-        	'authCode' => $authcode));
-  
-		return $userCon;
-	}
-
-	public function updateUserCon($id) {
-
-		$user = $this->em->getRepository('UserUserBundle:User')->find($id);
-
-		if(!$user) {
-			throw $this->createNotFoundException(
-            	'No user found for id '.$data['id']
-        	);
-		}
-		$user->setConfirmed(1);
-		
-		$this->em->flush();
-
-		return true;
-	}
 }

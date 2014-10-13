@@ -67,7 +67,7 @@ class UserController extends Controller {
  		try {
  			//Save user information
 			$form = $this->createForm(new SignUpUserForm());
-			$save = $this->get('user.userbundle.mapper')->saveUser($rForm);
+			$save = $this->get('user.userbundle.mapper')->saveUser(s);
  			if($save) {
  				$session = new Session();
 				
@@ -227,26 +227,7 @@ class UserController extends Controller {
 	    //return $this->render(...);
 	}
 
-	/**
-	 * Activate usre account
-	 */
-
-	public function activateAccountAction() {
-		$request 	= Request::createFromGlobals();
-		$form = $this->createForm(new LoginForm());
-		$id = $request->query->get('id');
-		
-		$activate = $this->get('user.userbundle.mapper')->activateAccount($id);
-
-		if($activate) {
-				return $this->render('UserUserBundle:Default:index.html.twig',  array(
-		        	'error' => '4',
-		        	'form' => $form->createView()
-		        ));
-		} else {
-			return false;
-		}
-	}
+	
 
 	public function saveUserConfirmationAction() {
 		$request 	= Request::createFromGlobals();

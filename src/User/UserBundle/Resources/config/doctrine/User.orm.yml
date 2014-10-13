@@ -20,3 +20,7 @@ User\UserBundle\Entity\User:
             scale: 100
         stat:
             type: integer   
+        roles:
+            type: string
+        salt:
+            type: string

@@ -23,15 +23,6 @@ class User implements UserInterface
 
     protected $roles;
 
-   // public function __set($name, $value)
-    //{
-       // $this->data[$name] = $value;
-    //}
-
-    //public function __get($name)
-    //{
-   //     return $this->data[$name]
-   // }
  
     public function getUsername() {
     	return $this->email;
@@ -88,7 +79,9 @@ class User implements UserInterface
     public function setStat($stat) {
         $this->stat = $stat;
     }
-
+    public function setRoles($roles) {
+        $this->roles = $roles;
+    }
     public function eraseCredentials()
     {
     }

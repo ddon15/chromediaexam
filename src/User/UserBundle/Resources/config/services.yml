@@ -4,7 +4,6 @@ services:
 #        arguments: [@service_id, "plain_value", %parameter%]
      user.userbundle.mapper:
         class: User\UserBundle\Mapper\UserMapper
-        arguments: [@doctrine.orm.entity_manager, @pw_encoder]
-
-     pw_encoder:
+        arguments: [@doctrine.orm.entity_manager]
+     sha256salted_encoder:
         class: User\UserBundle\Service\PasswordHash

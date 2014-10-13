@@ -1,9 +1,21 @@
 User\UserBundle\Entity\User:
-properties:
-        username:
-                    - MaxLength: {limit:250, message: "Username must be less than 250 characters."}
-                    - NotBlank: {message: "Please enter a first name."}
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: 
+            fields: [email]
+            message: 'This email has already registered'
+      
+    properties:
+        email:
+            - Email:
+                message: The email {{ value }} is not a valid email.
+                checkMX: true
+            - NotBlank: {message: 'Please enter your email address'}
+        lastname:
+            - NotBlank: {message:'Please enter your Lastname'}
+        firstname:
+            - NotBlank: {message:'Please enter your Firstname'}
         password:
-                    - MaxLength: {limit:250, message: "Password must be less than 250 characters."}
-                    - NotBlank: {message: "Please enter a last name."}
-       
+            - NotBlank: {message: 'Please enter your password'}
+            - Length: 
+                 min: 8
+                 minMessage: "Your password must be at least {{ limit }} characters long"  
