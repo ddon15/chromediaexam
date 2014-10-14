@@ -27,11 +27,12 @@ class UserController extends Controller {
  																	$this->get('pw_encoder')
  																	->encodePassword($logForm['password']));
 
+ 		$session = new Session();
  		if(count($check) > 0) {
 
  			$stat = $check->getStat();
  			if($stat == 1) {
-	 			$session = new Session();
+	 			
 				//$session->start();
 				$session->set('user', '1');
 				$session->set('userid', $check->getId());
@@ -45,10 +46,12 @@ class UserController extends Controller {
 			        ));
 	 		}
  		} else {
+ 			$session->getFlashbag()->add('invaliduser', 1);
  			$form = $this->createForm(new LoginForm());
  			return $this->render('UserUserBundle:Default:index.html.twig',  array(
 		        	'error' => '1',
-		        	'form' => $form->createView()
+		        	'form' => $form->createView(),
+		        	'last_username' => $logForm['email']
 		        ));
  		}
  		//return new JsonResponse(array('data', $check));

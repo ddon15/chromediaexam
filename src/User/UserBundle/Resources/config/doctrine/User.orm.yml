@@ -24,3 +24,5 @@ User\UserBundle\Entity\User:
             type: string
         salt:
             type: string
+        isActive: 
+            type: integer

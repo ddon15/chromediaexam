@@ -1,0 +1,22 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Sign Up{% endblock %}
+{% block css %}<link href="{{ asset('css/user.css') }}" rel="stylesheet"> {% endblock %}
+
+{% block body %}
+<div class="col-md-6">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Sign Up</h3>
+    </div>
+    <div class="panel-body">
+      {%if app.session.flashbag.get('saveuser') %}
+      <div class="alert alert-success">
+         You have successfully registered. You can <a href="login">Login</a> now.
+      </div>
+      {%endif%}
+      {{ form(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    </div>
+  </div>
+</div>
+{% endblock %}

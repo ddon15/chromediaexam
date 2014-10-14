@@ -23,6 +23,8 @@ class User implements UserInterface
 
     protected $roles;
 
+    private $isActive;
+
  
     public function getUsername() {
     	return $this->email;
@@ -49,7 +51,7 @@ class User implements UserInterface
     }
 
     public function getRoles() {
-        return $this->roles;
+        return array('ROLE_USER');
     }
 
     public function getId() {
@@ -84,8 +86,8 @@ class User implements UserInterface
     }
     public function eraseCredentials()
     {
-    }
 
+    }
 
     /**
      * Get email
@@ -95,5 +97,53 @@ class User implements UserInterface
     public function getEmail()
     {
         return $this->email;
+    }
+
+     public function isAccountNonExpired()
+    {
+        return true;
+    }
+
+    public function isAccountNonLocked()
+    {
+        return true;
+    }
+
+    public function isCredentialsNonExpired()
+    {
+        return true;
+    }
+
+    public function isEnabled()
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * Set is active
+     */
+    public function setIsActive($active) {
+        $this->isActive = $active;
+    }
+
+    public function equals(UserInterface $user)
+    {
+        if (!$user instanceof WebserviceUser) {
+            return false;
+        }
+
+        if ($this->password !== $user->getPassword()) {
+            return false;
+        }
+
+        if ($this->getSalt() !== $user->getSalt()) {
+            return false;
+        }
+
+        if ($this->username !== $user->getUsername()) {
+            return false;
+        }
+
+        return true;
     }
 }

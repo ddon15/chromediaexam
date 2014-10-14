@@ -49,12 +49,16 @@ $(document).ready(function(){
 			cache 	: false,
 			data 	: data,
 			dataType: 'json',
-			beforeSend: function() {$('#forgotPassForm_submitemail').html('<span class="fa fa-spin fa-spinner"></span>').attr('disabled', 'disabled')},
+			beforeSend: function() {
+				$('#forgotPassForm_submitemail').html('<span class="fa fa-spin fa-spinner"></span>').attr('disabled', 'disabled'); 
+				$('#forgotPassForm_email').attr('disabled','disabled');
+			},
 			success: function(data) {
 				console.log(data);
 				if(data.error == 0) {
 					$('div#error').addClass('alert alert-success').html('Reset password link successfully send to your email');
 					$('#forgotPassForm_submitemail').html('Send me and Email').removeAttr('disabled');
+					$('#forgotPassForm_email').removeAttr('disabled');
 					$('#forgotPassForm_email').val('');
 				} else {
 					$('div#error').addClass('alert alert-success').html(data.msg);

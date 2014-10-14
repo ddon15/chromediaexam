@@ -1,26 +1,37 @@
 security:
-    providers:
-        chain_provider:
-            chain:
-               providers: [user_db]
-        user_db:
-            entity: { class: User\UserBundle\Entity\User, property: email }
-    firewalls:
-        login_firewall:
-            pattern:   ^/login$
-            anonymous: ~
-        secured_area:
-            pattern:    ^/
-            form_login: ~
     encoders:
-        User\UserBundle\Entity\User:
-            id: sha256salted_encoder
+        User\UserBundle\Entity\User: sha512
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_USER]
+ 
+    providers:
+        user_db:
+            entity: { class: User\UserBundle\Entity\User, property: email}
+ 
+    firewalls:
+        main:
+            pattern: /.*
+            provider: user_db
+            form_login:
+                login_path: /login
+                check_path: /login_check
+                remember_me: true
+                username_parameter: 'login[email]'
+                password_parameter: 'login[password]'
+                default_target_path: /dashboard
+                failure_path: /login
+            logout:
+                path: /logout
+                target: /login
+            remember_me:
+                key: MiPassphrase
+                lifetime: 1800
+                path: /.*
+                domain: ~
+            security: true
+            anonymous: true
     access_control:
-       # - { path: /login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-       # - { path: /signup, roles: IS_AUTHENTICATED_ANONYMOUSLY}
-       # - { path: /.*, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-       - { path: /signup, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-       - { path: /login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-
-
-     
+        - { path: /login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: /dashboard, roles: ROLE_USER }
+        - { path: /changepass, roles: ROLE_USER }
+        - { path: /.*, roles: IS_AUTHENTICATED_ANONYMOUSLY }

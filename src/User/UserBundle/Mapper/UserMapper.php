@@ -22,9 +22,10 @@ class UserMapper{
 	 */
 	
 	public function saveUser($user) {
-		//var_dump($user); exit();
+	
 		$user->setStat(0);
-		$user->setRoles('user');
+		$user->setRoles('ROLE_USER');
+		$user->setIsActive(0);
 		$this->em->persist($user);
 		$this->em->flush();
 
