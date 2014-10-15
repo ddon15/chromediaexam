@@ -61,6 +61,7 @@ class DefaultController extends Controller
         $rform = $request->request->get('signup');
        
         
+        
         if($form->isValid()) {
                 //save data
                 $email  = $rform['email'];
@@ -78,7 +79,7 @@ class DefaultController extends Controller
                     'ac'        => $ac
                 ];
                 //Send email
-                $session = new Session();
+                $session = $request->getSession();
                 $sendEmail = $this->sendEmail($data);
                 if($sendEmail) {
                     $session->getFlashBag()->add('saveuser', 0);
@@ -100,18 +101,20 @@ class DefaultController extends Controller
     }
 
     public function dashboardAction()
-    {
-        $user = $this->get('security.context')->getToken()->getUser();
-        $stat= $user->getStat();
-
-        if($stat == 0) {
-            $session = new Session();
-            $session->set('notyetactivated', 1);
-            return $this->redirect($this->generateUrl('logout'));
+    {   
+        $request = $this->getRequest();
+       // $user = $this->get('security.context')->getToken()->getUser();
+       // $stat= $user->getStat();
+       $user = $this->getUser();
+        $form = $this->createForm(new EditAccountForm(), $user);
+        $form->handleRequest($request);
+        
+        if($form->isValid()){
+            $data = $request->get('editaccount');
+            $updateUser = $this->get('user.userbundle.mapper')->saveUser($form->getData());
+            
         }
-
-        $form = $this->createForm(new EditAccountForm());
-        $data['form']  = $form->createView();
+        $data['form'] = $form->createView();
         return $this->render('UserUserBundle:Default:dashboard.html.twig', $data);
       
     }
@@ -269,7 +272,7 @@ class DefaultController extends Controller
      */
     public function sendEmail($data) 
     {
-        $request    = Request::createFromGlobals();
+        $request    = $this->getRequest();
         $url =   $this->generateUrl('activate', array('id' => $data['id'], 'ac' => $data['ac']), true);
 
         $message = \Swift_Message::newInstance()

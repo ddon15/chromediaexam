@@ -16,6 +16,6 @@ User\UserBundle\Entity\User:
         password: 
             - NotBlank: {message: 'Please enter your password'}
             - Length:   
-                 min: 8
+                 min: 6
                  minMessage: "Your password must be at least {{ limit }} characters long"  
                 

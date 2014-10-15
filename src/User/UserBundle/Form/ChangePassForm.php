@@ -17,7 +17,7 @@ class ChangePassForm extends AbstractType
 				'class' => 'form-control'
 			),
 			'constraints' => array(new NotBlank(array('message' => 'Please enter your password')) ,
-								  new Length(array('min' => '8', 'minMessage' => 'Please enter your password at least 8 characters')))
+								  new Length(array('min' => '6', 'minMessage' => 'Please enter your password at least 8 characters')))
 		))
 		->add('newpassword', 'repeated', array(
 			'attr' => array('class'=>'form-control'),
