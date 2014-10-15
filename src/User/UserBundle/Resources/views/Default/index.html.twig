@@ -13,7 +13,7 @@
 	{% elseif error %}
 	    <div class="alert alert-danger">{{ error.message }}</div>
 	{% elseif app.session.flashbag.get('resetlinkexpired') %}  
-		<div class="alert alert-danger">Reset link is already expired. Please request another one. <a href=""></a></div> 
+		<div class="alert alert-danger">Reset link is already expired or already been used. Please request another one. Click here <a href="forgotpass">Forgot Password</a></div> 
 	{% else %}
 		<div class="alert alert-success">Hello. Click here to <a href="signup"> Sign up</a> or <a href="forgotpass"> Forgot Password</a></div> 
 	{%endif%}

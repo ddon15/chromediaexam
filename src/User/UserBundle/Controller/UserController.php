@@ -117,16 +117,16 @@ class UserController extends Controller {
 		$rForm		= $request->request->get('forgotPassForm');
 		
 		$isUser 			= $this->get('user.userbundle.mapper')->searchUserByEmail($rForm['email']);
-		$rForm['uid'] 	= $id->getId();
+		$rForm['uid'] 		= $isUser->getId();
 		
 		if($isUser) {
 			$save = $this->get('user.userbundle.mapper')->saveUserConfirmation($isUser->getId());
 			//print_r($save); exit;
 			if($save) {
 				$rForm['id'] 		= $save->getId();
-				$rForm['uid'] 		= $id->getId();
+				$rForm['uid'] 		= $isUser->getId();
 				$rForm['authcode'] 	= $save->getAuthCode();
-				$rForm['firstname'] = $id->getFirstname();
+				$rForm['firstname'] = $isUser->getFirstname();
 
 				//Send Reset Email
 				$sendEmail = $this->sendEmailToResetPassword($rForm);

@@ -164,10 +164,9 @@ class UserMapper{
 		$userCon->setUserId($id);
 		$userCon->setConfirmed(0);
 		$userCon->setDateSend(date('Y-m-d H:i:s'));
-		$userCon->setAuthCode(uniqid());
+		$userCon->setAuthCode(sha1(uniqid().time()));
 		$this->em->persist($userCon);
 		$this->em->flush();
-
 		$save = $userCon;
 		if(!$save) {
 			throw new exception('Unable to create new user confirmation detail');
