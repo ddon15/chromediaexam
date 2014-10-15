@@ -44,7 +44,7 @@ class UserMapper{
 	 */
 
 	public function updateUser($data) {
-
+		//print_r($data); exit;
 		$user = $this->em->getRepository('UserUserBundle:User')->find($data['id']);
 
 		if(!$user) {
@@ -55,8 +55,6 @@ class UserMapper{
 		//$user->setPassword($data['password']);
 		$user->setLastname($data['lastname']);
 		$user->setFirstname($data['firstname']);
-	
-		$user->setStat(0);
 		$this->em->flush();
 
 		return true;
@@ -121,6 +119,7 @@ class UserMapper{
             	'No user found for id '.$data['id']
         	);
 		}
+		$user->setSalt($data['salt']);
 		$user->setPassword($data['password']);
 		
 		$this->em->flush();
@@ -132,15 +131,20 @@ class UserMapper{
 	 * Activate account
 	 * @param Int id
 	 */
-	public function activateAccount($id) {
-		$user = $this->em->getRepository('UserUserBundle:User')->find($id);
+	public function activateAccount($id, $ac) {
+
+		$user = $this->em->getRepository('UserUserBundle:User')
+						 ->findOneBy(array(
+						 	'id' 				=> $id,
+						 	'activationCode'	=> $ac
+						 ));
 
 		if(!$user) {
 			return false;
 		} 
 		//current stat
 		$stat = $user->getStat();
-		//echo $stat; exit();
+		
 		if($stat == 1) {
 			return false;
 		}

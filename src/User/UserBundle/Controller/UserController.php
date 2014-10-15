@@ -15,96 +15,6 @@ use Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle;
 
 class UserController extends Controller {
 
-	public function checkUserAction()
- 	{
- 		$request = Request::createFromGlobals();
- 		$logForm = $request->request->get('login');
-
- 		// echo $logForm['email'] . '-' . $this->get('pw_encoder')->encodePassword($logForm['password']); die();
- 																	
- 		//Check user from database
- 		$check = $this->get('user.userbundle.mapper')->searchUserBy($logForm['email'], 
- 																	$this->get('pw_encoder')
- 																	->encodePassword($logForm['password']));
-
- 		$session = new Session();
- 		if(count($check) > 0) {
-
- 			$stat = $check->getStat();
- 			if($stat == 1) {
-	 			
-				//$session->start();
-				$session->set('user', '1');
-				$session->set('userid', $check->getId());
-				//print_r(expression)
-	 			return $this->redirect($this->generateUrl('dashboard'));
-	 		} else {
-	 			$form = $this->createForm(new LoginForm());
-	 			return $this->render('UserUserBundle:Default:index.html.twig',  array(
-			        	'error' => '5',
-			        	'form' => $form->createView()
-			        ));
-	 		}
- 		} else {
- 			$session->getFlashbag()->add('invaliduser', 1);
- 			$form = $this->createForm(new LoginForm());
- 			return $this->render('UserUserBundle:Default:index.html.twig',  array(
-		        	'error' => '1',
-		        	'form' => $form->createView(),
-		        	'last_username' => $logForm['email']
-		        ));
- 		}
- 		//return new JsonResponse(array('data', $check));
- 	}
-
- 	public function saveUserAction()
- 	{
- 		
- 		$request = Request::createFromGlobals();
- 		//$session = $request->getSession();
- 		$rForm = $request->request->get('signup');
- 		$password = $rForm['password'];
- 		// $salt = uniqid(mt_rand());
- 		//Hash password
- 		$rForm['password'] = $this->get('pw_encoder')->encodePassword($password);
- 		try {
- 			//Save user information
-			$form = $this->createForm(new SignUpUserForm());
-			$save = $this->get('user.userbundle.mapper')->saveUser(s);
- 			if($save) {
- 				$session = new Session();
-				
-				$session->getFlashBag()->add('saveuser', 1);
-
-				//Send an email
-				$rForm['id'] = $save;
-				$this->sendEmail($rForm);
-
- 				return $this->redirect($this->generateUrl('signup'));
-
- 			} else {
- 				return $this->render('UserUserBundle:Default:signup.html.twig',  array(
-		        	'error' => '1',
-		        	'form' => $form->createView()
-		        ));
- 			}
- 		
- 		} catch (Exception $e) {
- 			echo $e->getMessage();
- 		} 
- 		
- 	}
-
- 	/**
- 	 * Logout user
- 	 */
- 	public function logoutUserAction() 
- 	{
- 		$session = new Session();
- 		$session->invalidate();
- 		return $this->redirect($this->generateUrl('login'));
- 	}
-
  	/**
  	 * Update user
  	 */
@@ -116,8 +26,9 @@ class UserController extends Controller {
  		$rForm = $request->request->get('editaccount');
  		
  		try {
+ 			$user = $this->get('security.context')->getToken()->getUser();
  			$session = new Session();
- 			$rForm['id'] = $session->get('userid');
+ 			$rForm['id'] = $user->getId();
  			$update = $this->get('user.userbundle.mapper')->updateUser($rForm);
  			if($update) {
  				$session->getFlashBag()->add('updateuser', 0);
@@ -164,48 +75,17 @@ class UserController extends Controller {
 
  	}
 
- 	/**
-	 * Send an verification email
-	 */
-	public function sendEmail($data) {
-		$message = \Swift_Message::newInstance()
-	        ->setSubject('Verfication Email')
-	        ->setFrom('diovannie.donayre@chromedia.com')
-	        ->setTo($data['email'])
-	        ->setBody($this->renderView('UserUserBundle:Default:email.html.twig', array(
-																						'name' => $data['firstname'], 
-																						'id'   => $data['id'],
-																						'email' => $data['email']
-																						)
-				));
-
-	    try{
-	    	$this->get('mailer')->send($message);
-	  	} catch (Exception $e) {
-	  		echo $e->getMessage();
-	  	}
-	    //return $this->render(...);
-	}
-
 	/**
 	 * Send an Reset password link
 	 */
 	public function sendEmailToResetPassword($data) {
-		$uid = urlencode($data['uid']);
-		$id = urlencode($data['id']);
-		$authcode = urlencode($data['authcode']);
-		$dataUrl = array(
-			  'id'=>$id,
-              'authcode'=>$authcode
-              );
+		$uid 		= $data['uid'];
+		$id 		= $data['id'];
+		$authcode 	= $data['authcode'];
 
- 		$urlGet =  http_build_query($dataUrl);
-
-		$request = Request::createFromGlobals();
-		$host = $request->server->get('HTTP_HOST');
-		$url = html_entity_decode("http://".$host."/app_dev.php/resetpassword?".$urlGet);
+		$request 	= Request::createFromGlobals();
+		$url 		= $this->generateUrl('resetpassword', array('id' => $id, 'authcode' => $authcode), true);
 		
-
 		$message = \Swift_Message::newInstance()
 	        ->setSubject('Reset Password')
 	        ->setFrom('diovannie.donayre@chromedia.com')
@@ -236,16 +116,16 @@ class UserController extends Controller {
 		$request 	= Request::createFromGlobals();
 		$rForm		= $request->request->get('forgotPassForm');
 		
-		$id 		= $this->get('user.userbundle.mapper')->searchUserByEmail($rForm['email']);
-		$rForm['uid'] = $id->getId();
+		$isUser 			= $this->get('user.userbundle.mapper')->searchUserByEmail($rForm['email']);
+		$rForm['uid'] 	= $id->getId();
 		
-		if($id) {
-			$save = $this->get('user.userbundle.mapper')->saveUserConfirmation($id->getId());
+		if($isUser) {
+			$save = $this->get('user.userbundle.mapper')->saveUserConfirmation($isUser->getId());
 			//print_r($save); exit;
 			if($save) {
-				$rForm['id'] = $save->getId();
-				$rForm['uid'] = $id->getId();
-				$rForm['authcode'] = $save->getAuthCode();
+				$rForm['id'] 		= $save->getId();
+				$rForm['uid'] 		= $id->getId();
+				$rForm['authcode'] 	= $save->getAuthCode();
 				$rForm['firstname'] = $id->getFirstname();
 
 				//Send Reset Email

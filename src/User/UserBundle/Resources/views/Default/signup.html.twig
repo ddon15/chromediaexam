@@ -5,8 +5,18 @@
 
 {% block body %}
 <div class="col-md-6">
-    <div class="alert alert-error">
-       Please activate your account. 
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Sign Up</h3>
     </div>
+    <div class="panel-body">
+      {%if app.session.flashbag.get('saveuser') %}
+      <div class="alert alert-success">
+         You have successfully registered. Please check your email to activate your account.
+      </div>
+      {%endif%}
+      {{ form(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    </div>
+  </div>
 </div>
 {% endblock %}

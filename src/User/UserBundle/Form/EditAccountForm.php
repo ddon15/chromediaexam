@@ -12,8 +12,6 @@ class EditAccountForm extends AbstractType
 		->add('email', 'email')
 		->add('lastname', 'text')
 		->add('firstname', 'text');
-	//	->add('password', 'password')
-		//->add('conpassword', 'password');
 	}
 
 	public function getName() { 

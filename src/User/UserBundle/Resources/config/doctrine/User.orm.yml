@@ -9,6 +9,7 @@ User\UserBundle\Entity\User:
         email:
             type: string
             scale: 10
+            email: true
         password:
             type: string
             scale: 100
@@ -26,3 +27,5 @@ User\UserBundle\Entity\User:
             type: string
         isActive: 
             type: integer
+        activationCode: 
+            type: string

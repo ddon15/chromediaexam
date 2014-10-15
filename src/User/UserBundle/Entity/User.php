@@ -25,6 +25,8 @@ class User implements UserInterface
 
     private $isActive;
 
+    private $activationCode;
+
  
     public function getUsername() {
     	return $this->email;
@@ -58,6 +60,10 @@ class User implements UserInterface
         return $this->id;
     }
 
+    public function getActivationCode(){
+        return $this->activationCode;
+    }
+
     public function setEmail($email) {
         $this->email = $email;
     }
@@ -88,6 +94,14 @@ class User implements UserInterface
     {
 
     }
+    public function setActivationCode($ac) {
+        $this->activationCode  = $ac;
+    }
+
+    public function isPasswordLegal()
+    {
+        return $this->firstname != $this->password;
+    }
 
     /**
      * Get email
@@ -97,21 +111,6 @@ class User implements UserInterface
     public function getEmail()
     {
         return $this->email;
-    }
-
-     public function isAccountNonExpired()
-    {
-        return true;
-    }
-
-    public function isAccountNonLocked()
-    {
-        return true;
-    }
-
-    public function isCredentialsNonExpired()
-    {
-        return true;
     }
 
     public function isEnabled()
@@ -126,24 +125,7 @@ class User implements UserInterface
         $this->isActive = $active;
     }
 
-    public function equals(UserInterface $user)
-    {
-        if (!$user instanceof WebserviceUser) {
-            return false;
-        }
+   
 
-        if ($this->password !== $user->getPassword()) {
-            return false;
-        }
 
-        if ($this->getSalt() !== $user->getSalt()) {
-            return false;
-        }
-
-        if ($this->username !== $user->getUsername()) {
-            return false;
-        }
-
-        return true;
-    }
 }
